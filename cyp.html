@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>G.M. — C.y P.</title>
+  <link rel="stylesheet" href="cyp.css" />
+</head>
+<body>
+
+<!-- ───── ENCABEZADO ───── -->
+<header class="encabezado-sitio">
+  <h1>GUIA METODOLOGICA</h1>
+  <h2>COSTOS Y PRESUPUESTOS</h2>
+  <p> XXXX - Alexander Garofalo</p>
+</header>
+
+<!-- ───── BARRA DE PESTANAS ───── -->
+<nav class="barra-navegacion" id="barraTabs">
+  <button class="boton-tab" data-seccion="t1" onclick="cambiarSeccion('t1', this)">T1 · Costos Fijos</button>
+  <button class="boton-tab" data-seccion="t2" onclick="cambiarSeccion('t2', this)">T2 · Costos Variables</button>
+  <button class="boton-tab" data-seccion="t3" onclick="cambiarSeccion('t3', this)">T3 · Directos e Indirectos</button>
+  <button class="boton-tab" data-seccion="t4" onclick="cambiarSeccion('t4', this)">T4 · Materia Prima</button>
+  <button class="boton-tab" data-seccion="t5" onclick="cambiarSeccion('t5', this)">T5 · Mano de Obra</button>
+  <button class="boton-tab" data-seccion="t6" onclick="cambiarSeccion('t6', this)">T6 · Costeo de Recetas</button>
+  <button class="boton-tab" data-seccion="t7" onclick="cambiarSeccion('t7', this)">T7 · Margen de Ganancia</button>
+  <button class="boton-tab" data-seccion="t8" onclick="cambiarSeccion('t8', this)">T8 · Punto de Equilibrio</button>
+  <button class="boton-tab boton-evaluacion" data-seccion="evaluacion" onclick="cambiarSeccion('evaluacion', this)">Evaluación</button>
+  <button class="boton-tab boton-info" data-seccion="acerca-de" onclick="cambiarSeccion('acerca-de', this)">Acerca de</button>
+</nav>
+
+<!-- ───── CONTENIDO PRINCIPAL ───── -->
+<main class="contenedor-principal">
+
+  <!-- ══ TEMA 1 . COSTOS FIJOS ══ -->
+  <section id="t1" class="seccion">
+  </section>
+
+  <!-- ══ TEMA 2 · COSTOS VARIABLES (COMPLETO) ══ -->
+  <section id="t2" class="seccion">
+    <div class="encabezado-tema">
+      <span class="etiqueta-tema"></span>
+      <h2></h2>
+    </div>
+
+    <!-- Definición y características -->
+    <div>
+    </div>
+
+    <!-- Bloque de código -->
+    <div>
+    </div>>
+
+    <!-- Calculadora -->
+    <div>
+    </div>
+
+    <!-- Errores y tips -->
+    <div>
+    </div>
+  </section>
+
+  <!-- ══ TEMA 3 · COSTOS FIJOS ══ -->
+  <section id="t3" class="seccion">
+  </section>
+
+  <!-- ══ TEMA 4 · COSTOS MIXTOS ══ -->
+  <section id="t4" class="seccion">
+  </section>
+  
+  <!-- ══ TEMA 5 · COSTOS MIXTOS ══ -->
+  <section id="t5" class="seccion">
+  </section>
+  
+  <!-- ══ TEMA 6 · COSTEO DE RECETAS ══ -->
+  <section id="t6" class="seccion">
+  </section>
+  
+  <!-- ══ TEMA 7 · MARGEN DE GANANCIA ══ -->
+  <section id="t7" class="seccion">
+  </section>
+  
+  <!-- ══ TEMA 8 · PUNTO DE EQUILIBRIO ══ -->
+  <section id="t8" class="seccion">
+  </section>
+  
+  <!-- ───── RESPUESTA CALCULADORA NOTIFICATION ───── -->
+  <div id="notificacion" class="notificacion" role="alert"></div>
+
+
+  <!-- ══ EVALUACIÓN ══ -->
+  <section id="evaluacion" class="seccion">
+  </section>
+
+  <!-- ══ ACERCA DE ══ -->
+  <section id="acerca-de" class="seccion">
+  </section>
+
+</main>
+
+<!-- ───── PIE DE PÁGINA ───── -->
+<footer class="pie-pagina">
+  <p>Guía Metodológica · Costos y Presupuestos · xxx / Alexander Garofalo</p>
+</footer>
+
+<!-- ───── SCRIPTS ───── -->
+    <script src="cyp_utilitarios.js"></script>
+    <script src="cyp_calculadoras.js"></script>
+    <script src="cyp.js"></script>
+  </body>
+</html>
