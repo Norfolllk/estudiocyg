@@ -1,5 +1,5 @@
 /* ─────────────────────────────────────────────────────────────────
-   FUNCIONES AUXILIARES
+   FUNCIONES AUXILIARES * 
    ───────────────────────────────────────────────────────────────── */
 function mostrarResultadoCalculadora(idCaja, lineas) {
   let caja = document.getElementById(idCaja);

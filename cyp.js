@@ -19,7 +19,7 @@ function cambiarSeccion(idSeccion, botonActivo) {
 }
 
 /* ─────────────────────────────────────────────────────────────────
-   EMERGENTE — NOTIFICACIÓN TEMPORAL
+   EMERGENTE — NOTIFICACIÓN TEMPORAL (RESULTADO CALCULADORA)
    ───────────────────────────────────────────────────────────────── */
 
 function mostrarEmergente(mensaje, tipo) {

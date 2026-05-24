@@ -1,4 +1,4 @@
-/* ── UTILITARIOS DE DATOS ──────────────────────────────── */
+/* ── UTILITARIOS DE DATOS BAASE ──────────────────────────────── */
 function recuperarTexto(idComponente) {
   let componente = document.getElementById(idComponente);
   return componente ? componente.value : '';
@@ -14,7 +14,8 @@ function recuperarDecimal(idComponente) {
   return parseFloat(valorCaja);
 }
 
-/* ── VISUALIZACIÓN DE RESULTADOS ──────────────────────────────── */
+
+/* ── VISUALIZACIÓN DE RESULTADOS BASE ──────────────────────────────── */
 
 function mostrarTexto(idComponente, mensaje) {
   let componente = document.getElementById(idComponente);

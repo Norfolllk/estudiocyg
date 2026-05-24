@@ -1,0 +1,5 @@
+PROMPT .CSS:
+
+1.Buenas chat! Analiza únicamente cada adjunto que te entregue, por el momento solo analiza tanto individualmente como en su conjunto.
+
+2. Actúa como diseñador gráfico, mejora la parte visual de esta pagina  sin perder la formalidad y la profesionalidad, además debe ser RESPONSIVE; modifica para centra todos los títulos, agregando brillo y presencia. Además utiliza una paleta de colores solidos excepto para el encabezado (contraste), e íconos más limpios, los títulos y subtítulos en verde, combina siendo simple lo visual. Necesito únicamente que me muestres el código del .css
