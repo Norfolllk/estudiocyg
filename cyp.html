@@ -115,6 +115,71 @@
 
   <!-- ══ TEMA 4 · COSTOS MIXTOS ══ -->
   <section id="t4" class="seccion">
+    <div class="encabezado-tema">
+      <span class="etiqueta-tema">Tema 4</span>
+      <h2>Costos de Materia Prima</h2>
+    </div>
+
+    <!-- Definición y características -->
+    <div class="fila-dos-columnas">
+      <div class="caja-info">
+        <h4>Definición</h4>
+        <p>El control adecuado de la materia prima permite reducir desperdicios, mejorar la producción y obtener mayores ganancias dentro de una empresa.</p>
+      </div>
+      <div class="caja-info">
+        <h4>Tipos</h4>
+        <ul>
+          <li><strong>Directa:</strong> ingredientes principales del producto.</li>
+          <li><strong>Indirecta:</strong> empaques, etiquetas, condimentos.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Bloque de código -->
+    <div class="bloque-codigo">
+      <div class="etiqueta-lenguaje">JavaScript</div>
+      <pre><code>// Plantilla: Materia Prima
+          let harina = recuperarDecimal('harina'); // ej. 2
+          let huevos = recuperarDecimal('huevos'); // ej. 3
+          let azucar = recuperarDecimal('azucar'); // ej. 1
+
+          let totalMP = harina + huevos + azucar;
+          mostrarTexto('resultado', "Costo Materia Prima: $" + totalMP);
+          // Resultado: Costo Materia Prima: $6</code></pre>
+    </div>
+
+    <!-- Calculadora -->
+    <div class="bloque-calculadora">
+      <h4>🧮 Calculadora Interactiva</h4>
+      <div class="grilla-campos">
+        <div class="campo"><label>Ingrediente 1 ($)</label><input type="number" id="mp_i1" placeholder="2" step="0.01" /></div>
+        <div class="campo"><label>Ingrediente 2 ($)</label><input type="number" id="mp_i2" placeholder="3" step="0.01" /></div>
+        <div class="campo"><label>Ingrediente 3 ($)</label><input type="number" id="mp_i3" placeholder="1" step="0.01" /></div>
+        <div class="campo"><label>% Merma (desperdicio)</label><input type="number" id="mp_merma" placeholder="10" /></div>
+      </div>
+      <button class="boton-calcular" onclick="calcularMateriaPrima()">Calcular</button>
+      <div class="caja-resultado" id="res_mp"></div>
+    </div>
+
+    <!-- Errores y tips -->
+    <div class="fila-dos-columnas">
+      <div class="caja-errores">
+        <h4>Errores Comunes</h4>
+        <ul>
+          <li>No considerar las mermas o desperdicios en el costo de materia prima.</li>
+          <li>Omitir la materia prima indirecta (empaques) al calcular el costo de producción.</li>
+          <li>No actualizar los precios de insumos ante variaciones del mercado.</li>
+        </ul>
+      </div>
+      <div class="caja-tips">
+        <h4>Tips</h4>
+        <ul>
+          <li><strong>Factor de merma:</strong> Si la receta pide 100g y se desperdicia un 10%, el costo real es sobre 110g.</li>
+          <li><strong>Costeo exacto:</strong> Incluye TODOS los insumos: ingredientes, empaques y materiales indirectos.</li>
+          <li><strong>Consejo:</strong> Actualiza los costos cada vez que cambien los precios de proveedores.</li>
+        </ul>
+      </div>
+    </div>
   </section>
   
   <!-- ══ TEMA 5 · COSTOS MIXTOS ══ -->
