@@ -34,12 +34,11 @@
 
     <!-- ══ TEMA 1 · COSTOS FIJOS ══ -->
     <section id="t1" class="seccion">
-      <h3>Costos Fijos</h3>
-      <input type="text" id="cf_alq" placeholder="Alquiler">
-      <input type="text" id="cf_serv" placeholder="Servicios">
-      <input type="text" id="cf_suel" placeholder="Sueldos">
+      <input type="number" id="alquiler" placeholder="Alquiler"><br>
+      <input type="number" id="servicios" placeholder="Servicios"><br>
+      <input type="number" id="sueldos" placeholder="Sueldos"><br>
       <button onclick="calcularCostosFijos()">Calcular</button>
-      <div id="res_cf"></div>
+      <p id="res1"></p>
       <footer class="pie-pagina">
         <p>Seccion creada por: Oscar Gomez</p>
       </footer>
@@ -213,13 +212,10 @@
 
     <!-- ══ TEMA 5 · MANO DE OBRA ══ -->
     <section id="t5" class="seccion">
-      <h3>Mano de Obra</h3>
-      <input type="text" id="mo_horas" placeholder="Horas trabajadas">
-      <input type="text" id="mo_costo" placeholder="Costo por hora">
-      <button onclick="calcularManoObra()">Calcular</button>
-      <div id="res_mo"></div>
-      <footer class="pie-pagina">
-        <p>Seccion creada por: Oscar Gomez</p>
+    <input type="number" id="horas" placeholder="Horas"><br>
+    <input type="number" id="costo" placeholder="Costo por hora"><br>
+    <button onclick="calcularManoObra()">Calcular</button>
+    <p id="res5"></p>
       </footer>
     </section>
 
