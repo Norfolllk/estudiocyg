@@ -14,26 +14,26 @@ function mostrarResultadoCalculadora(idCaja, lineas) {
    TEMA 1 — COSTOS FIJOS
    ───────────────────────────────────────────────────────────────── */
 function calcularCostosFijos() {
-  let alquiler  = recuperarDecimal('cf_alq');
-  let servicios = recuperarDecimal('cf_serv');
-  let sueldos   = recuperarDecimal('cf_suel');
+  let alquiler   = recuperarDecimal('cf_alq') || 0;
+  let servicios  = recuperarDecimal('cf_serv') || 0;
+  let sueldos    = recuperarDecimal('cf_suel') || 0;
 
-  if ([alquiler, servicios, sueldos].some(v => isNaN(v) || v < 0)) {
-    mostrarEmergente('Todos los valores deben ser números válidos ≥ 0', 'error');
+  if (alquiler <= 0 && servicios <= 0 && sueldos <= 0) {
+    mostrarEmergente('Ingresa al menos un valor.', 'error');
     return;
   }
 
-  let total = alquiler + servicios + sueldos;
+  let totalCostosFijos = alquiler + servicios + sueldos;
 
   mostrarResultadoCalculadora('res_cf', [
-    '🏢 Alquiler:   $' + alquiler.toFixed(2),
-    '💡 Servicios:  $' + servicios.toFixed(2),
-    '👨‍💼 Sueldos:    $' + sueldos.toFixed(2),
+    'Alquiler:     $' + alquiler.toFixed(2),
+    'Servicios:    $' + servicios.toFixed(2),
+    'Sueldos:      $' + sueldos.toFixed(2),
     '━━━━━━━━━━━━━━━━━━━━',
-    '💰 Total Costos Fijos: <strong>$' + total.toFixed(2) + '</strong>'
+    'Total Costos Fijos: <strong>$' + totalCostosFijos.toFixed(2) + '</strong>'
   ]);
 
-  mostrarEmergente('Total CF: $' + total.toFixed(2), 'exito');
+  mostrarEmergente('Costos Fijos: $' + totalCostosFijos.toFixed(2), 'exito');
 }
 
 /* ─────────────────────────────────────────────────────────────────
@@ -64,21 +64,16 @@ function calcularCostosVariables() {
    TEMA 3 — COSTOS DIRECTOS E INDIRECTOS
    ───────────────────────────────────────────────────────────────── */
 function calcularDirectosIndirectos() {
-  let directos   = recuperarDecimal('ci_dir');
-  let indirectos = recuperarDecimal('ci_ind');
-
-  if ([directos, indirectos].some(v => isNaN(v) || v < 0)) {
-    mostrarEmergente('Ingresa valores válidos ≥ 0', 'error');
-    return;
-  }
+  let directos   = recuperarDecimal('ci_dir') || 0;
+  let indirectos = recuperarDecimal('ci_ind') || 0;
 
   let total = directos + indirectos;
 
   mostrarResultadoCalculadora('res_ci', [
-    '📦 Directos:   $' + directos.toFixed(2),
-    '🏭 Indirectos: $' + indirectos.toFixed(2),
+    'Costos Directos:   $' + directos.toFixed(2),
+    'Costos Indirectos: $' + indirectos.toFixed(2),
     '━━━━━━━━━━━━━━━━━━━━',
-    '💰 Total: <strong>$' + total.toFixed(2) + '</strong>'
+    'Costo Total: <strong>$' + total.toFixed(2) + '</strong>'
   ]);
 
   mostrarEmergente('Costo Total: $' + total.toFixed(2), 'exito');
@@ -114,23 +109,21 @@ function calcularMateriaPrima() {
    TEMA 5 — MANO DE OBRA
    ───────────────────────────────────────────────────────────────── */
 function calcularManoObra() {
-  let horas = recuperarDecimal('mo_horas');
-  let costo = recuperarDecimal('mo_costo');
+  let horasTrabajadas = recuperarDecimal('mo_horas') || 0;
+  let costoHora       = recuperarDecimal('mo_costo') || 0;
 
-  if (isNaN(horas) || isNaN(costo) || horas <= 0 || costo <= 0) {
-    mostrarEmergente('Horas y costo deben ser mayores a 0', 'error');
+  if (horasTrabajadas <= 0 || costoHora <= 0) {
+    mostrarEmergente('Ingresa valores válidos.', 'error');
     return;
   }
 
-  let total = horas * costo;
-  let costoPorDia = total / 5; // mejora: estimación semanal
+  let total = horasTrabajadas * costoHora;
 
   mostrarResultadoCalculadora('res_mo', [
-    '⏱ Horas trabajadas: ' + horas,
-    '💲 Costo por hora:  $' + costo.toFixed(2),
+    'Horas trabajadas: ' + horasTrabajadas,
+    'Costo por hora:   $' + costoHora.toFixed(2),
     '━━━━━━━━━━━━━━━━━━━━',
-    '💰 Total: <strong>$' + total.toFixed(2) + '</strong>',
-    '📅 Estimado diario: $' + costoPorDia.toFixed(2)
+    'Costo Mano de Obra: <strong>$' + total.toFixed(2) + '</strong>'
   ]);
 
   mostrarEmergente('Mano de Obra: $' + total.toFixed(2), 'exito');
@@ -172,37 +165,33 @@ function calcularReceta() {
    TEMA 7 — MARGEN DE GANANCIA
    ───────────────────────────────────────────────────────────────── */
 function calcularMargenGanancia() {
-  let costo  = recuperarDecimal('mg_costo');
-  let precio = recuperarDecimal('mg_precio');
+  let costo   = recuperarDecimal('mg_costo') || 0;
+  let precio  = recuperarDecimal('mg_precio') || 0;
 
-  if (isNaN(costo) || isNaN(precio) || costo < 0 || precio <= 0) {
-    mostrarEmergente('Valores inválidos', 'error');
+  if (costo <= 0 || precio <= 0) {
+    mostrarEmergente('Ingresa valores válidos.', 'error');
     return;
   }
 
   if (precio <= costo) {
-    mostrarEmergente('No hay ganancia (precio ≤ costo)', 'error');
+    mostrarEmergente('El precio debe ser mayor al costo.', 'error');
     return;
   }
 
   let ganancia = precio - costo;
   let margen   = (ganancia / precio) * 100;
 
-  let estado = margen >= 50 ? '🟢 Alta rentabilidad' :
-               margen >= 30 ? '🟡 Rentable' :
-               '🔴 Baja rentabilidad';
-
   mostrarResultadoCalculadora('res_mg', [
-    '💵 Costo:     $' + costo.toFixed(2),
-    '💲 Precio:    $' + precio.toFixed(2),
-    '📈 Ganancia:  $' + ganancia.toFixed(2),
+    'Costo:        $' + costo.toFixed(2),
+    'Precio:       $' + precio.toFixed(2),
+    'Ganancia:     $' + ganancia.toFixed(2),
     '━━━━━━━━━━━━━━━━━━━━',
-    '📊 Margen: <strong>' + margen.toFixed(2) + '%</strong>',
-    estado
+    'Margen: <strong>' + margen.toFixed(2) + '%</strong>'
   ]);
 
   mostrarEmergente('Margen: ' + margen.toFixed(2) + '%', 'exito');
 }
+
 /* ─────────────────────────────────────────────────────────────────
    TEMA 8 — PUNTO DE EQUILIBRIO
    ───────────────────────────────────────────────────────────────── */
