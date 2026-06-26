@@ -277,6 +277,18 @@ function guardarReceta() {
       unidad: f.querySelector('.sim-rec-unidad').value
     });
   });
+  var hayDiferencia = false;
+  data.receta.forEach(function(ing) {
+    var match = data.mp.find(function(p) {
+      return p.nombre.toLowerCase() === ing.nombre.toLowerCase();
+    });
+    if (match && match.unidad !== ing.unidad) {
+      hayDiferencia = true;
+    }
+  });
+  if (hayDiferencia) {
+    alert('Los ingredientes seleccionados usan unidades distintas a las del inventario.');
+  }
   window._simEstadoReceta = data;
   localStorage.setItem(key, JSON.stringify(data));
   var lista = JSON.parse(localStorage.getItem('receta_lista') || '[]');
