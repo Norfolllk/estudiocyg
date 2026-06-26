@@ -23,8 +23,9 @@
   <button onclick="mostrarSeccion('t6')">🍳 T6 Costeo de Recetas</button>
   <button onclick="mostrarSeccion('t7')">💰 T7 Margen de Ganancia</button>
   <button onclick="mostrarSeccion('t8')">⚖ T8 Punto de Equilibrio</button>
-  <button onclick="mostrarSeccion('simulador')">🎯 Simulador</button>
-  <button onclick="mostrarSeccion('evaluacion')">📝 Evaluación</button>
+   <button onclick="mostrarSeccion('simulador')">🎯 Simulador</button>
+   <button onclick="mostrarSeccion('clientes')">👤 Clientes</button>
+   <button onclick="mostrarSeccion('evaluacion')">📝 Evaluación</button>
   <button onclick="mostrarSeccion('acercaDe')">ℹ Acerca de</button>
 </nav>
 
@@ -604,6 +605,77 @@ let PE = CF / (PV - CVU);
       <div class="dash-fila"><div><div class="dash-label">Crecimiento Total</div><div class="dash-small">Acumulado / Meta (P. Equilibrio)</div></div><div class="dash-valor" style="color:#155724;font-weight:700" id="res_crecimiento_valor">+0.0%</div></div>
     </div>
   </div>
+
+  <div class="calc-box" id="tabla-clientes-costos">
+    <div style="text-align:center;margin-bottom:10px">
+      <h4 style="margin:0 0 8px 0">📋 Relación Clientes - Costos de Producción</h4>
+      <button onclick="actualizarTablaClientesCostos()" style="font-size:0.85rem;padding:6px 20px">🔄 Actualizar Clientes</button>
+    </div>
+    <p style="font-size:0.82rem;color:#555;margin-bottom:10px;text-align:center">Costo Unit. = Costo por porción · P. Venta x Mayor = P. sugerido con margen T7 · P. Venta Público = Mayorista + % Margen</p>
+    <div style="overflow-x:auto;width:100%">
+      <table>
+        <thead>
+          <tr>
+            <th>Cliente</th><th>Receta</th><th>Unid.</th>
+            <th>Costo Unit.</th><th>Costo Total</th>
+            <th>% Margen</th>
+            <th>P. Venta x Mayor</th><th>P. Venta Público</th>
+            <th>P. Equilibrio</th><th>Ganancia</th>
+          </tr>
+        </thead>
+        <tbody id="cuerpo-tabla-clientes-costos">
+          <tr><td colspan="10" style="color:#888;font-style:italic">Presiona "Calcular Costo Total" para ver los datos.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="resultado visible" id="resumen-clientes-costos" style="margin-top:10px;display:none"></div>
+  </div>
+</section>
+
+<!-- ═══ CLIENTES ═══ -->
+<section id="clientes">
+  <h2>Registro de Clientes</h2>
+
+  <div class="info-card">
+    <h4>🗒️ Gestión de Clientes</h4>
+    <p>Registra los clientes y asigna las recetas solicitadas. Puedes hacer seguimiento del estado de cada pedido desde que se recepta hasta que se entrega.</p>
+  </div>
+
+  <div class="calc-box">
+    <h4>📝 Datos del Cliente</h4>
+    <div class="fila-form">
+      <div class="campo"><h5>Cédula</h5><input type="text" id="cli_cedula" placeholder="Cédula" oninput="this.value=this.value.replace(/[^0-9]/g,'')"></div>
+      <div class="campo"><h5>Nombre</h5><input type="text" id="cli_nombre" placeholder="Nombre" oninput="this.value=this.value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑ\s]/g,'')"></div>
+      <div class="campo"><h5>Apellido</h5><input type="text" id="cli_apellido" placeholder="Apellido" oninput="this.value=this.value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑ\s]/g,'')"></div>
+      <div class="campo"><h5>Teléfono</h5><input type="text" id="cli_telefono" placeholder="0991234567" oninput="this.value=this.value.replace(/[^0-9]/g,'')"></div>
+      <div class="campo"><h5>Receta</h5>
+        <select id="cli_receta" style="padding:7px 10px;border:1px solid #ccc;border-radius:4px;font-size:0.88rem;width:180px;outline:none">
+          <option value="">— Seleccionar —</option>
+        </select>
+      </div>
+      <div class="campo"><h5>Unidades</h5><input type="number" id="cli_unidades" placeholder="1" min="1"></div>
+    </div>
+    <div class="botonera">
+      <button onclick="guardarCliente()">💾 Guardar Cliente</button>
+      <button class="secundario" onclick="limpiarCliente()">✕ Limpiar</button>
+    </div>
+  </div>
+
+  <div class="calc-box">
+    <h4>📋 Lista de Clientes</h4>
+    <div style="overflow-x:auto;width:100%">
+      <table>
+        <thead>
+          <tr>
+            <th>Cédula</th><th>Nombre</th><th>Apellido</th>
+            <th>Teléfono</th><th>Receta</th><th>Unidades</th><th>Estado</th><th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody id="tablaClientes"></tbody>
+      </table>
+    </div>
+  </div>
+  <footer class="pie-pagina"><p>Seccion creada por: Alexander Garofalo</p></footer>
 </section>
 
 <!-- ═══ EVALUACIÓN ═══ -->

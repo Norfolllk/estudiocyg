@@ -1,6 +1,6 @@
 /* ===== NAVEGACIÓN ===== */
 function cambiarSeccion(idSeccion, botonActivo) {
-  var ids = ['t1','t2','t3','t4','t5','t6','t7','t8','simulador','evaluacion','acerca-de'];
+  var ids = ['t1','t2','t3','t4','t5','t6','t7','t8','simulador','clientes','evaluacion','acerca-de','acercaDe'];
   ids.forEach(function(id) {
     var el = document.getElementById(id);
     if (el) el.classList.remove('activa');
@@ -258,6 +258,9 @@ function guardarReceta() {
     prod_desc:  document.getElementById('sim_prod_desc')?.value || '',
     prod_cat:   document.getElementById('sim_prod_cat')?.value || '',
     prod_pv:    document.getElementById('sim_prod_pv')?.value || '',
+    _costoPorc: _ultCostoPorc,
+    _precioSug: _ultPrecioSug,
+    _peUnidades: _ultPeUnidades,
     mp:         [],
     receta:     []
   };
@@ -295,6 +298,9 @@ function guardarReceta() {
   lista.push(key);
   localStorage.setItem('receta_lista', JSON.stringify(lista));
   cargarListaRecetas();
+  cargarRecetasClientes();
+  guardarUltimosCostos();
+  actualizarTablaClientesCostos();
   alert('Receta guardada: ' + recetaNombre);
 }
 
@@ -543,7 +549,283 @@ function simularCosteo() {
   var peEl = document.getElementById('res_pe_valor');
   if (peEl) peEl.value = peDinero > 0 ? '$' + peDinero.toFixed(2) : '\u2014';
 
+  _ultCostoPorc = costoPorPorc;
+  _ultPrecioSug = precioSug;
+  _ultPeUnidades = peUnidades;
+  guardarUltimosCostos();
+  actualizarTablaClientesCostos();
+
   alert('$' + costoProduccion.toFixed(2) + ' \u00b7 $' + costoPorPorc.toFixed(2) + '/porci\u00f3n');
+}
+
+/* ===== GLOBALES COSTEO ===== */
+var _ultCostoPorc = 0;
+var _ultPrecioSug = 0;
+var _ultPeUnidades = 0;
+
+function guardarUltimosCostos() {
+  localStorage.setItem('cyp_costos', JSON.stringify({
+    costoPorc: _ultCostoPorc,
+    precioSug: _ultPrecioSug,
+    peUnidades: _ultPeUnidades
+  }));
+}
+
+function cargarUltimosCostos() {
+  var saved = localStorage.getItem('cyp_costos');
+  if (saved) {
+    try {
+      var d = JSON.parse(saved);
+      _ultCostoPorc = d.costoPorc || 0;
+      _ultPrecioSug = d.precioSug || 0;
+      _ultPeUnidades = d.peUnidades || 0;
+    } catch(e) {}
+  }
+}
+
+function buscarDatosReceta(nombreReceta) {
+  if (!nombreReceta) return null;
+  var lista = JSON.parse(localStorage.getItem('receta_lista') || '[]');
+  for (var i = 0; i < lista.length; i++) {
+    var saved = localStorage.getItem(lista[i]);
+    if (!saved) continue;
+    try {
+      var d = JSON.parse(saved);
+      if ((d._nombre === nombreReceta || d.nombre === nombreReceta) && d._costoPorc > 0) {
+        return { costoPorc: d._costoPorc, precioSug: d._precioSug, peUnidades: d._peUnidades };
+      }
+    } catch(e) {}
+  }
+  return null;
+}
+
+/* ===== TABLA CLIENTES-COSTOS ===== */
+function actualizarTablaClientesCostos() {
+  var tbody = document.getElementById('cuerpo-tabla-clientes-costos');
+  if (!tbody) return;
+  if (clientes.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="10" style="color:#888;font-style:italic">No hay clientes registrados en la secci\u00f3n Clientes.</td></tr>';
+    return;
+  }
+  var totalUnidades = 0, totalIngresoMayor = 0, totalIngresoPublico = 0, totalGanancia = 0;
+  var hayDatos = false;
+  tbody.innerHTML = clientes.map(function(cli) {
+    /* buscar costo de la receta asignada al cliente */
+    var costoPorc = _ultCostoPorc;
+    var precioSug = _ultPrecioSug;
+    var peUnid    = _ultPeUnidades;
+    var recetaData = buscarDatosReceta(cli.receta);
+    if (recetaData) {
+      costoPorc = recetaData.costoPorc;
+      precioSug = recetaData.precioSug;
+      peUnid    = recetaData.peUnidades;
+    }
+    var margenCli = cli.margen || 30;
+    var retailMarkup = 1 + margenCli / 100;
+    var pvpCli = precioSug * retailMarkup;
+    var totalPedido  = costoPorc * cli.unidades;
+    var totalMayor   = precioSug * cli.unidades;
+    var totalPublico = pvpCli * cli.unidades;
+    var gananciaCli  = totalMayor - totalPedido;
+    if (costoPorc > 0 && precioSug > 0) hayDatos = true;
+    totalUnidades += (cli.unidades || 0);
+    totalIngresoMayor += totalMayor;
+    totalIngresoPublico += totalPublico;
+    totalGanancia += gananciaCli;
+    return '<tr>' +
+      '<td>' + escAttr(cli.nombre + ' ' + cli.apellido) + '</td>' +
+      '<td>' + escAttr(cli.receta) + '</td>' +
+      '<td>' + cli.unidades + '</td>' +
+      '<td>' + (costoPorc > 0 ? '$' + costoPorc.toFixed(2) : '\u2014') + '</td>' +
+      '<td>' + (costoPorc > 0 ? '$' + totalPedido.toFixed(2) : '\u2014') + '</td>' +
+      '<td><input type="number" value="' + margenCli + '" step="1" min="0" style="width:50px;font-size:0.75rem;padding:2px 4px;text-align:center;border:1px solid #ccc;border-radius:3px" onchange="actualizarMargenCliente(\'' + cli.cedula + '\', this.value)"></td>' +
+      '<td>' + (precioSug > 0 ? '$' + precioSug.toFixed(2) : '\u2014') + '</td>' +
+      '<td>' + (precioSug > 0 ? '$' + totalPublico.toFixed(2) : '\u2014') + '</td>' +
+      '<td>' + (peUnid > 0 ? Math.ceil(peUnid) : 'N/A') + '</td>' +
+      '<td style="color:' + (gananciaCli >= 0 ? '#155724' : '#c0392b') + ';font-weight:700">' + (costoPorc > 0 ? '$' + gananciaCli.toFixed(2) : '\u2014') + '</td>' +
+    '</tr>';
+  }).join('');
+  if (!hayDatos) {
+    tbody.innerHTML = '<tr><td colspan="10" style="color:#888;font-style:italic">Calcula primero el Costo Total en el Simulador y guarda la receta.</td></tr>';
+    return;
+  }
+  var resumenEl = document.getElementById('resumen-clientes-costos');
+  if (resumenEl) {
+    resumenEl.style.display = 'block';
+    resumenEl.innerHTML =
+      '<strong>Resumen:</strong> ' + clientes.length + ' cliente(s) \u00b7 ' +
+      totalUnidades + ' unidad(es) \u00b7 ' +
+      'Ingreso x Mayor: <strong>$' + totalIngresoMayor.toFixed(2) + '</strong> \u00b7 ' +
+      'Ingreso x P\u00fablico: <strong>$' + totalIngresoPublico.toFixed(2) + '</strong> \u00b7 ' +
+      'Ganancia Total: <strong style="color:' + (totalGanancia >= 0 ? '#155724' : '#c0392b') + '">$' + totalGanancia.toFixed(2) + '</strong>';
+  }
+}
+
+function actualizarMargenCliente(cedula, valor) {
+  var c = buscarCliente(cedula);
+  if (c) {
+    c.margen = parseFloat(valor) || 30;
+    guardarClientesStorage();
+    actualizarTablaClientesCostos();
+  }
+}
+
+/* ===== CLIENTES ===== */
+var clientes = [];
+var clienteSeleccionado = null;
+
+function guardarClientesStorage() {
+  localStorage.setItem('cyp_clientes', JSON.stringify(clientes));
+}
+
+function cargarClientesStorage() {
+  var saved = localStorage.getItem('cyp_clientes');
+  if (saved) {
+    try { clientes = JSON.parse(saved); } catch(e) { clientes = []; }
+  }
+}
+
+function buscarCliente(cedula) {
+  return clientes.find(function(c) { return c.cedula === cedula; }) || null;
+}
+
+function pintarClientes() {
+  var tabla = document.getElementById('tablaClientes');
+  if (!tabla) return;
+  if (clientes.length === 0) {
+    tabla.innerHTML = '<tr><td colspan="8" style="color:#888;font-style:italic">No hay clientes registrados.</td></tr>';
+    return;
+  }
+  tabla.innerHTML = clientes.map(function(c) {
+    return '<tr>' +
+      '<td>' + escAttr(c.cedula) + '</td>' +
+      '<td>' + escAttr(c.nombre) + '</td>' +
+      '<td>' + escAttr(c.apellido) + '</td>' +
+      '<td>' + escAttr(c.telefono || '-') + '</td>' +
+      '<td>' + escAttr(c.receta || '-') + '</td>' +
+      '<td>' + (c.unidades || 0) + '</td>' +
+      '<td>' +
+        '<select onchange="actualizarEstadoCliente(\'' + c.cedula + '\', this.value)" style="font-size:0.78rem;padding:3px 4px;border:1px solid #ccc;border-radius:3px">' +
+          '<option value="Receptado"' + (c.estado === 'Receptado' ? ' selected' : '') + '>Receptado</option>' +
+          '<option value="En proceso"' + (c.estado === 'En proceso' ? ' selected' : '') + '>En proceso</option>' +
+          '<option value="Entregado"' + (c.estado === 'Entregado' ? ' selected' : '') + '>Entregado</option>' +
+        '</select>' +
+      '</td>' +
+      '<td>' +
+        '<button onclick="seleccionarCliente(\'' + c.cedula + '\')" style="font-size:0.75rem;padding:4px 8px">✏ Editar</button> ' +
+        '<button class="btn-peligro" onclick="eliminarCliente(\'' + c.cedula + '\')" style="font-size:0.75rem;padding:4px 8px">🗑 Eliminar</button>' +
+      '</td>' +
+    '</tr>';
+  }).join('');
+}
+
+function guardarCliente() {
+  var cedula   = recuperaraTexto('cli_cedula');
+  var nombre   = recuperaraTexto('cli_nombre');
+  var apellido = recuperaraTexto('cli_apellido');
+  var telefono = recuperaraTexto('cli_telefono');
+  var receta   = document.getElementById('cli_receta').value;
+  var unidades = parseInt(document.getElementById('cli_unidades').value) || 0;
+
+  if (!cedula || !nombre || !apellido || !receta || unidades <= 0) {
+    alert('Completa todos los campos correctamente.');
+    return;
+  }
+  if (!/^[0-9]+$/.test(cedula)) { alert('La cédula solo debe contener números.'); return; }
+  if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/.test(nombre)) { alert('El nombre solo debe contener letras.'); return; }
+  if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/.test(apellido)) { alert('El apellido solo debe contener letras.'); return; }
+  if (telefono && !/^[0-9]+$/.test(telefono)) { alert('El teléfono solo debe contener números.'); return; }
+
+  if (clienteSeleccionado) {
+    clienteSeleccionado.nombre   = nombre;
+    clienteSeleccionado.apellido = apellido;
+    clienteSeleccionado.telefono = telefono;
+    clienteSeleccionado.receta   = receta;
+    clienteSeleccionado.unidades = unidades;
+    alert('Cliente actualizado correctamente.');
+  } else {
+    var existente = buscarCliente(cedula);
+    if (existente) {
+      if (!confirm('Ya existe un cliente con esa cédula. ¿Actualizar?')) return;
+      existente.nombre   = nombre;
+      existente.apellido = apellido;
+      existente.telefono = telefono;
+      existente.receta   = receta;
+      existente.unidades = unidades;
+      alert('Cliente actualizado.');
+    } else {
+      clientes.push({
+        cedula: cedula,
+        nombre: nombre,
+        apellido: apellido,
+        telefono: telefono,
+        receta: receta,
+        unidades: unidades,
+        estado: 'Receptado',
+        margen: 30
+      });
+      alert('Cliente registrado correctamente.');
+    }
+  }
+  guardarClientesStorage();
+  pintarClientes();
+  actualizarTablaClientesCostos();
+  limpiarCliente();
+}
+
+function seleccionarCliente(cedula) {
+  var c = buscarCliente(cedula);
+  if (!c) return;
+  clienteSeleccionado = c;
+  mostrarTextoEnCaja('cli_cedula', c.cedula);
+  mostrarTextoEnCaja('cli_nombre', c.nombre);
+  mostrarTextoEnCaja('cli_apellido', c.apellido);
+  mostrarTextoEnCaja('cli_telefono', c.telefono || '');
+  document.getElementById('cli_receta').value = c.receta || '';
+  mostrarTextoEnCaja('cli_unidades', c.unidades || '');
+  document.getElementById('cli_cedula').disabled = true;
+}
+
+function eliminarCliente(cedula) {
+  if (!confirm('¿Eliminar al cliente con cédula ' + cedula + '?')) return;
+  clientes = clientes.filter(function(c) { return c.cedula !== cedula; });
+  alert('Cliente eliminado.');
+  guardarClientesStorage();
+  pintarClientes();
+  actualizarTablaClientesCostos();
+}
+
+function limpiarCliente() {
+  ['cli_cedula','cli_nombre','cli_apellido','cli_telefono','cli_unidades'].forEach(function(id) {
+    mostrarTextoEnCaja(id, '');
+  });
+  document.getElementById('cli_receta').value = '';
+  document.getElementById('cli_cedula').disabled = false;
+  clienteSeleccionado = null;
+}
+
+function actualizarEstadoCliente(cedula, estado) {
+  var c = buscarCliente(cedula);
+  if (c) { c.estado = estado; guardarClientesStorage(); }
+}
+
+function cargarRecetasClientes() {
+  var select = document.getElementById('cli_receta');
+  if (!select) return;
+  select.innerHTML = '<option value="">— Seleccionar —</option>';
+  var lista = JSON.parse(localStorage.getItem('receta_lista') || '[]');
+  lista.forEach(function(key) {
+    var saved = localStorage.getItem(key);
+    if (!saved) return;
+    try {
+      var data = JSON.parse(saved);
+      var nombre = data._nombre || data.nombre || key;
+      var opt = document.createElement('option');
+      opt.value = nombre;
+      opt.textContent = nombre;
+      select.appendChild(opt);
+    } catch(e) {}
+  });
 }
 
 /* ===== COLLAPSIBLE ===== */
@@ -621,4 +903,9 @@ function reiniciarQuiz() {
   cambiarSeccion('t1', btn);
   setTimeout(actualizarConversor, 100);
   cargarListaRecetas();
+  cargarRecetasClientes();
+  cargarClientesStorage();
+  cargarUltimosCostos();
+  pintarClientes();
+  actualizarTablaClientesCostos();
 })();
